@@ -1,0 +1,62 @@
+from django.shortcuts import render
+from .models import *
+from .serializers import *
+
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import permissions
+from rest_framework.parsers import MultiPartParser, JSONParser
+
+
+class SignUpView(APIView):
+    parser_classes = [JSONParser, MultiPartParser]
+    permission_classes = [permissions.AllowAny]
+    def get(self, request):
+        user = User.objects.all()
+        ser = UserSerializer(user, many=True)
+        return Response(ser.data)
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+
+class XodimView(APIView):
+    parser_classes = [JSONParser, MultiPartParser]
+    def get(self, request):
+        xodim = Xodim.objects.all()
+        ser = XodimSerializer(xodim, many=True)
+        return Response(ser.data)
+
+    def post(self, request):
+        serializer = XodimSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+
+class XodimDetail(APIView):
+    parser_classes = [JSONParser, MultiPartParser]
+    def get(self, request, id):
+        xodim = Xodim.objects.get(id=id)
+        ser = XodimSerializer(xodim)
+        return Response(ser.data)
+
+    def patch(self, request, id):
+        xodim = Xodim.objects.get(id=id)
+        ser = XodimSerializer(xodim, data = request.data, partial=True)
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors)
+
+    def delete(self, request, id):
+        xodim = Xodim.objects.get(id=id)
+        xodim.delete()
+        return Response({'message':'xodim o\'chirildi'})
+
+    
