@@ -16,6 +16,28 @@ class PhotoList(ListCreateAPIView):
     serializer_class = PhotoSerializer
 
 
+class PhotoEditView(APIView):
+    def patch(self, request, id):
+        photo = Photo.objects.get(id=id)
+        rasm = request.data.get('rasm')
+        photo.photo = rasm
+        photo.save()
+        return Response({'message': 'successfully'})
+
+    def get(self, request, id):
+        try:
+            photo = Photo.objects.get(id=id)
+            ser = PhotoSerializer(photo)
+            return Response(ser.data)
+        except:
+            return Response({'xato': "bu id xato"})
+
+    def delete(self, request, id):
+        photo = Photo.objects.get(id=id)
+        photo.delete()
+        return Response({'deleted':'successfully'})
+
+
 class Ish_TuriView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request):
@@ -198,11 +220,11 @@ class HisobotDetail(APIView):
         hisobot = Hisobot.objects.get(id=id)
         serializer = HisobotSerializer(hisobot, data = request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            s = serializer.save()
             if a:
                 for x in a:
                     n = Photo.objects.create(photo=x)
-                    hisobot.rasm.add(n)
+                    s.rasm.add(n)
             return Response(serializer.data)
         return Response(serializer.errors)
     

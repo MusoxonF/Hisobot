@@ -26,7 +26,7 @@ class HisobotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hisobot
         fields = ('id', 'xodim', 'user', 'problem', 'rasm', 'files', 'izoh', 'created', 'updated','maxsulot', 'xato_soni', 'butun_soni', 'ish_vaqti')
-
+        read_only_fields = ['rasm']
     def update(self, instance, validated_data):
         instance.xodim = validated_data.get('xodim', instance.xodim)
         instance.user = validated_data.get('user', instance.user)

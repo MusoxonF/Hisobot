@@ -26,7 +26,7 @@ class Hisobot(models.Model):
     xodim = models.ForeignKey(Xodim, on_delete=models.CASCADE, related_name='xodim')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='User')
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='problem', null=True, blank=True)
-    rasm = models.ManyToManyField(Photo, related_name='MistakesPhoto', blank = True)
+    rasm = models.ManyToManyField(Photo, related_name='MistakesPhoto')
     files = models.FileField(upload_to = 'MistakeFiles/', null=True, blank=True)
     izoh = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
