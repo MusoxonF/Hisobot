@@ -16,7 +16,7 @@ class User(AbstractUser):
     status = models.CharField(max_length=13, choices=STATUS_CHOICES)
     gender = models.CharField(max_length=6, choices = JINS)
     phone = models.CharField(max_length=13)
-    image = models.ImageField(upload_to = 'user_photos')
+    image = models.ImageField(upload_to = 'user_photos', default='default.jpg')
     def __str__(self):
         return self.username
 
@@ -45,8 +45,8 @@ class Xodim(models.Model):
     gender = models.CharField(max_length=6, choices = JINS, null = True)
     name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
-    image = models.ImageField(upload_to = 'xodim_photos')
-    phone = models.CharField(max_length=13)
+    image = models.ImageField(upload_to = 'xodim_photos', default='default.jpg')
+    phone = models.CharField(max_length=13, unique=True)
     ish_turi = models.ManyToManyField(Ish_turi, related_name = 'ish_turi')
     xodim_id = models.CharField(max_length = 5, unique=True)
     bolimi = models.ForeignKey(Bolim, on_delete = models.CASCADE, related_name = 'bolim')

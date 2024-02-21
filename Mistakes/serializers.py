@@ -7,25 +7,25 @@ from User.serializers import UserSerializer, XodimSerializer
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
-        fields = '__all__'
+        fields = ('id', 'photo')
 
 
 class MaxsulotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Maxsulot
-        fields = ('name','maxsulot_id')
+        fields = ('id', 'name','maxsulot_id')
 
 
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Problem
-        fields = ('xato_id', 'problem_name')
+        fields = ('id', 'xato_id', 'problem_name')
 
 
 class HisobotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hisobot
-        fields = ('xodim', 'user', 'problem', 'rasm', 'files', 'izoh', 'created', 'updated','maxsulot', 'xato_soni', 'butun_soni', 'ish_vaqti')
+        fields = ('id', 'xodim', 'user', 'problem', 'rasm', 'files', 'izoh', 'created', 'updated','maxsulot', 'xato_soni', 'butun_soni', 'ish_vaqti')
 
     def update(self, instance, validated_data):
         instance.xodim = validated_data.get('xodim', instance.xodim)
@@ -47,7 +47,7 @@ class HisobotGetSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     problem = ProblemSerializer()
     maxsulot = MaxsulotSerializer()
-    photo = PhotoSerializer(many=True)
+    rasm = PhotoSerializer(many=True)
     class Meta:
         model = Hisobot
-        fields = ('id', 'xodim', 'user', 'problem', 'files', 'izoh', 'created', 'updated','maxsulot', 'xato_soni', 'butun_soni', 'ish_vaqti', 'photo')
+        fields = ('id', 'xodim', 'user', 'problem', 'files', 'izoh', 'created', 'updated','maxsulot', 'xato_soni', 'butun_soni', 'ish_vaqti', 'rasm')

@@ -24,6 +24,25 @@ class SignUpView(APIView):
         return Response(serializer.errors)
 
 
+class SignUpDetail(APIView):
+    parser_classes = [JSONParser, MultiPartParser]
+    permission_classes = [permissions.AllowAny]
+    def get(self, request, id):
+        try:
+            user = User.objects.get(id=id)
+            ser = UserSerializer(user)
+            return Response(ser.data)
+        except:
+            return Response({'xato': "bu id xato"})
+
+    def patch(self, request, id):
+        user = User.objects.get(id=id)
+        ser = UserSerializer(user, data = request.data, partial=True)
+        if ser.is_valid():
+            ser.save()
+            return Response(ser.data)
+        return Response(ser.errors)
+
 class XodimView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request):
@@ -42,9 +61,12 @@ class XodimView(APIView):
 class XodimDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        xodim = Xodim.objects.get(id=id)
-        ser = XodimSerializer(xodim)
-        return Response(ser.data)
+        try:
+            xodim = Xodim.objects.get(id=id)
+            ser = XodimSerializer(xodim)
+            return Response(ser.data)
+        except:
+            return Response({'xato': "bu id xato"})
 
     def patch(self, request, id):
         xodim = Xodim.objects.get(id=id)

@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
         }
     def create(self, validated_data):
         password = validated_data.pop('password')
-        user = super(UserSerializers, self).create(validated_data)
+        user = super(UserSerializer, self).create(validated_data)
         user.set_password(password)
         user.save()
         return user
@@ -43,7 +43,7 @@ class XodimSerializer(serializers.ModelSerializer):
 class Ish_turiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ish_turi
-        fields = ('id', 'ish_name')
+        fields = ('id', 'ish_name', 'ish_id')
 
 class BolimSerializer(serializers.ModelSerializer):
     class Meta:

@@ -9,6 +9,7 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('signup/', SignUpView.as_view(), name='signup'),
+    path('signup/<int:id>/', SignUpDetail.as_view(), name='signup_detail'),
     path('xodim/', XodimView.as_view(), name='xodim'),
     path('xodim/<int:id>/', XodimDetail.as_view(), name='xodim_detail'),
 ]

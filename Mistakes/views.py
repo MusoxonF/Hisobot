@@ -31,12 +31,15 @@ class Ish_TuriView(APIView):
         return Response(serializer.errors)
 
 class Ish_TuriDetail(APIView):
-    parser_classes = [JSONParser, MultiPartParser]
+    # parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        ish_turi = Ish_turi.objects.get(id=id)
-        ser = Ish_turiSerializer(ish_turi)
-        return Response(ser.data)
-    
+        try:
+            ish_turi = Ish_turi.objects.get(id=id)
+            ser = Ish_turiSerializer(ish_turi)
+            return Response(ser.data)
+        except:
+            return Response({'xato': "bu id xato"})
+
     def patch(self, request, id):
         ish_turi = Ish_turi.objects.get(id=id)
         serializer = Ish_turiSerializer(ish_turi, data = request.data, partial=True)
@@ -67,9 +70,12 @@ class BolimView(APIView):
 class BolimDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        bolim = Bolim.objects.get(id=id)
-        ser = BolimSerializer(bolim)
-        return Response(ser.data)
+        try:
+            bolim = Bolim.objects.get(id=id)
+            ser = BolimSerializer(bolim)
+            return Response(ser.data)
+        except:
+            return Response({'xato': "bu id xato"})
 
     def patch(self, request, id):
         bolim = Bolim.objects.get(id=id)
@@ -101,9 +107,12 @@ class MaxsulotView(APIView):
 class MaxsulotDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        maxsulot = Maxsulot.objects.get(id=id)
-        ser = MaxsulotSerializer(maxsulot)
-        return Response(ser.data)
+        try:
+            maxsulot = Maxsulot.objects.get(id=id)
+            ser = MaxsulotSerializer(maxsulot)
+            return Response(ser.data)
+        except:
+            return Response({'xato': "bu id xato"})
 
     def patch(self, request, id):
         maxsulot = Maxsulot.objects.get(id=id)
@@ -135,9 +144,12 @@ class ProblemView(APIView):
 class ProblemDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        problem = Problem.objects.get(id=id)
-        ser = ProblemSerializer(problem)
-        return Response(ser.data)
+        try:
+            problem = Problem.objects.get(id=id)
+            ser = ProblemSerializer(problem)
+            return Response(ser.data)
+        except:
+            return Response({'xato': "bu id xato"})
 
     def patch(self, request, id):
         problem = Problem.objects.get(id=id)
@@ -156,32 +168,41 @@ class HisobotView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request):
         hisobot = Hisobot.objects.all()
-        ser = HisobotSerializer(hisobot, many=True)
+        ser = HisobotGetSerializer(hisobot, many=True)
         return Response(ser.data)
 
     def post(self, request):
-        photo = request.data.getlist('photo', [])
+        photo = request.data.getlist('rasm', [])
         serializer = HisobotSerializer(data=request.data)
         if serializer.is_valid():
             d = serializer.save()
             for x in photo:
                 s = Photo.objects.create(photo=x)
-                d.photo.add(s)
+                d.rasm.add(s)
             return Response(serializer.data)
         return Response(serializer.errors)
+
 
 class HisobotDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        hisobot = Hisobot.objects.get(id=id)
-        ser = HisobotSerializer(hisobot)
-        return Response(ser.data)
+        try:
+            hisobot = Hisobot.objects.get(id=id)
+            ser = HisobotSerializer(hisobot)
+            return Response(ser.data)
+        except:
+            return Response({'xato': "bu id xato"})
     
     def patch(self, request, id):
+        a = request.data.get('rasm', None)
         hisobot = Hisobot.objects.get(id=id)
         serializer = HisobotSerializer(hisobot, data = request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            if a:
+                for x in a:
+                    n = Photo.objects.create(photo=x)
+                    hisobot.rasm.add(n)
             return Response(serializer.data)
         return Response(serializer.errors)
     
