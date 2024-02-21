@@ -3,10 +3,17 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, JSONParser
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 
 from .serializers import *
 from .models import *
 from User.serializers import *
+
+
+class PhotoList(ListCreateAPIView):
+    parser_classes = [JSONParser, MultiPartParser]
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer
 
 
 class Ish_TuriView(APIView):

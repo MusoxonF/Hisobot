@@ -26,6 +26,19 @@ class XodimSerializer(serializers.ModelSerializer):
         model = Xodim
         fields = ('id', 'gender', 'name', 'last_name', 'image', 'phone', 'ish_turi', 'xodim_id', 'bolimi')
         read_only_fields = ('created', 'updated')
+
+    def update(self, instance, validated_data):
+        instance.gender = validated_data.get('gender', instance.gender)
+        instance.name = validated_data.get('name', instance.name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.image = validated_data.get('image', instance.image)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.ish_turi = validated_data.get('ish_turi', instance.ish_turi)
+        instance.xodim_id = validated_data.get('xodim_id', instance.xodim_id)
+        instance.bolimi = validated_data.get('bolimi', instance.bolimi)
+        instance.save()
+        return instance
+        
         
 class Ish_turiSerializer(serializers.ModelSerializer):
     class Meta:
