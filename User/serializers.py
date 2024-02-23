@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from .models import *
 
 
@@ -9,6 +9,19 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         user = User.objects.get(username=self.user.username)
         data['status'] = user.status
         data['id'] = user.id
+        return data
+
+
+class MyTokenRefreshSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        data = super(MyTokenRefreshSerializer, self).validate(attrs)
+        # data2 = super(MyTokenObtainPairSerializer, self).validate(attrs)
+        # data2 = attrs.get('refresh')
+        data['refresh'] = attrs.get('refresh') 
+        # user = User.objects.get(username=self.user.username)
+        # data['status'] = user.status
+        # data['id'] = user.id
+        # return (data, f'refresh: {data2}')
         return data
 
 
