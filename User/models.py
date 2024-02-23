@@ -4,14 +4,16 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     JINS = [
-            ('male', 'Male'),
-            ('female', 'Female'),
+            ('Erkak', 'Erkak'),
+            ('Ayol', 'Ayol'),
+            ('Null', 'Null'),
         ]
 
     STATUS_CHOICES = (
-        ('admin', 'Admin'),
-        ('tekshiruvchi', 'Tekshiruvchi'),
-        ('bolim', 'Bolim'),
+        ('Director', 'Director'),
+        ('Admin', 'Admin'),
+        ('Tekshiruvchi', 'Tekshiruvchi'),
+        ('Bulim', 'Bulim'),
     )
     status = models.CharField(max_length=13, choices=STATUS_CHOICES)
     gender = models.CharField(max_length=6, choices = JINS)
@@ -39,8 +41,9 @@ class Bolim(models.Model):
 
 class Xodim(models.Model):
     JINS = [
-            ('male', 'Male'),
-            ('female', 'Female'),
+            ('Erkak', 'Erkak'),
+            ('Ayol', 'Ayol'),
+            ('Null', 'Null'),
         ]
     gender = models.CharField(max_length=6, choices = JINS, null = True)
     name = models.CharField(max_length=32)

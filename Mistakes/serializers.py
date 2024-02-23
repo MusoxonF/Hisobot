@@ -1,7 +1,18 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import *
 from User.serializers import UserSerializer, XodimSerializer
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def vaidate(self, attrs):
+        data = super(MyTokenObtainPairSerializer, self).vaidate(attrs)
+        user = User.objects.get(username=self.user.username)
+        data['status'] = user.status
+        data['id'] = user.id
+        return data
+
 
 
 class PhotoSerializer(serializers.ModelSerializer):
