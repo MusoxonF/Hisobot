@@ -12,14 +12,12 @@ from User.serializers import *
 
 class PhotoList(ListCreateAPIView):
     parser_classes = [JSONParser, MultiPartParser]
-    # permission_classes = [permissions.AllowAny]
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
 
 
 class PhotoEditView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
-    # permission_classes = [permissions.AllowAny]
     def patch(self, request, id):
         photo = Photo.objects.get(id=id)
         rasm = request.data.get('rasm')
@@ -57,7 +55,7 @@ class Ish_TuriView(APIView):
 
 
 class Ish_TuriDetail(APIView):
-        parser_classes = [JSONParser, MultiPartParser]
+    parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
         try:
             ish_turi = Ish_turi.objects.get(id=id)
