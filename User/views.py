@@ -45,6 +45,7 @@ class SignUpDetail(APIView):
 
 class XodimView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
+    permission_classes = [permissions.AllowAny]
     def get(self, request):
         xodim = Xodim.objects.all()
         ser = XodimSerializer(xodim, many=True)
@@ -60,6 +61,7 @@ class XodimView(APIView):
 
 class XodimDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
+    permission_classes = [permissions.AllowAny]
     def get(self, request, id):
         try:
             xodim = Xodim.objects.get(id=id)
