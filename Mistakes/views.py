@@ -20,7 +20,7 @@ class PhotoEditView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def patch(self, request, id):
         photo = Photo.objects.get(id=id)
-        rasm = request.data.get('rasm')
+        rasm = request.data.get('photo')
         photo.photo = rasm
         photo.save()
         return Response({'message': 'successfully'})

@@ -1,24 +1,22 @@
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import *
 from User.serializers import UserSerializer, XodimSerializer
-
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def vaidate(self, attrs):
-        data = super(MyTokenObtainPairSerializer, self).vaidate(attrs)
-        user = User.objects.get(username=self.user.username)
-        data['status'] = user.status
-        data['id'] = user.id
-        return data
-
 
 
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = ('id', 'photo')
+    def update(self, instance, validated_data):
+        
+        rasm_data = validated_data.pop('rasm', [])  # Extract rasm data from validated data
+        instance = super().update(instance, validated_data)
+        instance.rasm.clear()  # Remove existing related photos
+        for photo_data in rasm_data:
+            photo_instance = Photo.objects.create(photo=photo_data)
+            instance.rasm.add(photo_instance)  # Add Photo instances to Hisobot
+        return instance
 
 
 class MaxsulotSerializer(serializers.ModelSerializer):
