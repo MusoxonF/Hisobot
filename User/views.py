@@ -10,7 +10,6 @@ from rest_framework.parsers import MultiPartParser, JSONParser
 
 class SignUpView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
-    # permission_classes = [permissions.AllowAny]
     def get(self, request):
         user = User.objects.all()
         ser = UserSerializer(user, many=True)
@@ -26,7 +25,6 @@ class SignUpView(APIView):
 
 class SignUpDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
-    # permission_classes = [permissions.AllowAny]
     def get(self, request, id):
         try:
             user = User.objects.get(id=id)
@@ -61,7 +59,6 @@ class XodimView(APIView):
 
 class XodimDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
-    # permission_classes = [permissions.AllowAny]
     def get(self, request, id):
         try:
             xodim = Xodim.objects.get(id=id)
