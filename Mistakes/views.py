@@ -12,11 +12,14 @@ from User.serializers import *
 
 class PhotoList(ListCreateAPIView):
     parser_classes = [JSONParser, MultiPartParser]
+    # permission_classes = [permissions.AllowAny]
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
 
 
 class PhotoEditView(APIView):
+    parser_classes = [JSONParser, MultiPartParser]
+    # permission_classes = [permissions.AllowAny]
     def patch(self, request, id):
         photo = Photo.objects.get(id=id)
         rasm = request.data.get('rasm')
@@ -52,8 +55,9 @@ class Ish_TuriView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
+
 class Ish_TuriDetail(APIView):
-    # parser_classes = [JSONParser, MultiPartParser]
+        parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
         try:
             ish_turi = Ish_turi.objects.get(id=id)
@@ -75,6 +79,7 @@ class Ish_TuriDetail(APIView):
         ish_turi.delete()
         return Response(status=204)
 
+
 class BolimView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request):
@@ -88,6 +93,7 @@ class BolimView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
 
 class BolimDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
@@ -112,6 +118,7 @@ class BolimDetail(APIView):
         bolim.delete()
         return Response(status=204)
 
+
 class MaxsulotView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request):
@@ -125,6 +132,7 @@ class MaxsulotView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
 
 class MaxsulotDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
@@ -149,6 +157,7 @@ class MaxsulotDetail(APIView):
         maxsulot.delete()
         return Response(status=204)
 
+
 class ProblemView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request):
@@ -162,6 +171,7 @@ class ProblemView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
 
 class ProblemDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
@@ -185,6 +195,7 @@ class ProblemDetail(APIView):
         problem = Problem.objects.get(id=id)
         problem.delete()
         return Response(status=204)
+
 
 class HisobotView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
