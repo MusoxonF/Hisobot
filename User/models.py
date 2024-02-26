@@ -10,10 +10,10 @@ class User(AbstractUser):
         ]
 
     STATUS_CHOICES = (
-        ('Director', 'Director'),
+        ('Diretor', 'Diretor'),
         ('Admin', 'Admin'),
         ('Tekshiruvchi', 'Tekshiruvchi'),
-        ('Bulim', 'Bulim'),
+        ('Bulum', 'Bulum'),
     )
     status = models.CharField(max_length=13, choices=STATUS_CHOICES)
     gender = models.CharField(max_length=6, choices = JINS)
