@@ -28,7 +28,7 @@ class MyTokenRefreshSerializer(TokenRefreshSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'password', 'gender', 'phone', 'image')
+        fields = ('id', 'username', 'password', 'first_name', 'last_name',  'image', 'gender', 'phone', 'status', 'gender')
         write_only_fields = ('password')
         extra_kwargs = {
             'password': {
