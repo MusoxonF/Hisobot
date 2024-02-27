@@ -57,7 +57,7 @@ class XodimSerializer(serializers.ModelSerializer):
         instance.photo = validated_data.get('photo', instance.photo)
         instance.phone = validated_data.get('phone', instance.phone)
         # instance.ish_turi = validated_data.get('ish_turi', instance.ish_turi)
-        instance.xodim_id = validated_data.get('xodim_id', instance.xodim_id)
+        instance.id_raqam = validated_data.get('id_raqam', instance.id_raqam)
         instance.bulimi = validated_data.get('bulimi', instance.bulimi)
         instance.save()
         return instance
