@@ -30,7 +30,7 @@ class HisobotSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.xodim = validated_data.get('xodim', instance.xodim)
         # instance.user = validated_data.get('user', instance.user)
-        instance.problem = validated_data.get('xato', instance.problem)
+        instance.xato = validated_data.get('xato', instance.xato)
         # instance.rasm = validated_data.get('rasm', instance.rasm)
         instance.files = validated_data.get('audio', instance.files)
         instance.izoh = validated_data.get('izoh', instance.izoh)
