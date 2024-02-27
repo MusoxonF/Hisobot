@@ -203,13 +203,13 @@ class HisobotView(APIView):
         return Response(ser.data)
 
     def post(self, request):
-        photo = request.data.getlist('rasm', [])
+        photo = request.data.getlist('photo', [])
         serializer = HisobotSerializer(data=request.data)
         if serializer.is_valid():
             d = serializer.save()
             for x in photo:
                 s = Photo.objects.create(photo=x)
-                d.rasm.add(s)
+                d.photo.add(s)
             return Response(serializer.data)
         return Response(serializer.errors)
 
@@ -225,7 +225,7 @@ class HisobotDetail(APIView):
             return Response({'xato': "bu id xato"})
     
     def patch(self, request, id):
-        a = request.data.get('rasm', None)
+        a = request.data.get('photo', None)
         hisobot = Hisobot.objects.get(id=id)
         serializer = HisobotSerializer(hisobot, data = request.data, partial=True)
         if serializer.is_valid():
@@ -233,7 +233,7 @@ class HisobotDetail(APIView):
             if a:
                 for x in a:
                     n = Photo.objects.create(photo=x)
-                    s.rasm.add(n)
+                    s.photo.add(n)
             return Response(serializer.data)
         return Response(serializer.errors)
     

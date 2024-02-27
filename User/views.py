@@ -41,6 +41,12 @@ class SignUpDetail(APIView):
             return Response(ser.data)
         return Response(ser.errors)
 
+    def delete(self, request, id):
+        user = User.objects.get(id=id)
+        user.delete()
+        return Response({'message':'user o\'chirildi'})
+
+
 class XodimView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     permission_classes = [permissions.AllowAny]
