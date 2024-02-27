@@ -19,7 +19,7 @@ class Problem(models.Model):
     xato_id = models.CharField(max_length = 5, unique=True)
 
     def __str__(self):
-        return self.problem_name
+        return self.name
 
 
 class Hisobot(models.Model):

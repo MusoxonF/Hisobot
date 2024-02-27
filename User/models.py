@@ -27,7 +27,7 @@ class Ish_turi(models.Model):
     name = models.CharField(max_length=100)
     ish_id = models.CharField(max_length = 5, unique=True)
     def __str__(self):
-        return self.ish_name
+        return self.name
 
 
 class Bolim(models.Model):
