@@ -82,7 +82,7 @@ class XodimDetail(APIView):
             if a:
                 xodim.ish_turi.set(a)  # Set the 'ish_turi' field with the provided IDs
             return Response(ser.data)
-        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(ser.errors)
 
     def delete(self, request, id):
         xodim = Xodim.objects.get(id=id)
