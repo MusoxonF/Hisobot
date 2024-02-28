@@ -74,17 +74,15 @@ class XodimDetail(APIView):
             return Response({'xato': "bu id xato"})
 
     def patch(self, request, id):
-        a = request.data.getlist('ish_turi', [])
+        a = request.data.getlist('ish_turi', [])  # Assuming 'ish_turi' is provided as a list of IDs
         xodim = Xodim.objects.get(id=id)
-        ser = XodimSerializer(xodim, data = request.data, partial=True)
+        ser = XodimSerializer(xodim, data=request.data, partial=True)
         if ser.is_valid():
-            s = ser.save()
+            ser.save()
             if a:
-                s.ish_turi.clear()
-                for x in a:
-                    s.ish_turi.add(x)
+                xodim.ish_turi.set(a)  # Set the 'ish_turi' field with the provided IDs
             return Response(ser.data)
-        return Response(ser.errors)
+        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
         xodim = Xodim.objects.get(id=id)
