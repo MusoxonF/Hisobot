@@ -80,7 +80,7 @@ class XodimDetail(APIView):
         if ser.is_valid():
             s = ser.save()
             if a:
-                s.ish_turi.delete()
+                s.ish_turi.pop()
                 for x in a:
                     s.ish_turi.add(x)
             return Response(ser.data)
