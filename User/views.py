@@ -74,7 +74,7 @@ class XodimDetail(APIView):
             return Response({'xato': "bu id xato"})
 
     def patch(self, request, id):
-        a = request.data.get('ish_turi', None)
+        a = request.data.getlist('ish_turi', [])
         xodim = Xodim.objects.get(id=id)
         ser = XodimSerializer(xodim, data = request.data, partial=True)
         if ser.is_valid():
