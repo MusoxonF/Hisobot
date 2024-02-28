@@ -50,17 +50,17 @@ class XodimSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name', 'photo', 'phone', 'ish_turi', 'id_raqam', 'gender', 'bulimi')
         read_only_fields = ('created', 'updated')
 
-    # def update(self, instance, validated_data):
-    #     instance.gender = validated_data.get('gender', instance.gender)
-    #     instance.first_name = validated_data.get('first_name', instance.first_name)
-    #     instance.last_name = validated_data.get('last_name', instance.last_name)
-    #     instance.photo = validated_data.get('photo', instance.photo)
-    #     instance.phone = validated_data.get('phone', instance.phone)
-    #     # instance.ish_turi = validated_data.get('ish_turi', instance.ish_turi)
-    #     instance.id_raqam = validated_data.get('id_raqam', instance.id_raqam)
-    #     instance.bulimi = validated_data.get('bulimi', instance.bulimi)
-    #     instance.save()
-    #     return instance
+    def update(self, instance, validated_data):
+        instance.gender = validated_data.get('gender', instance.gender)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.photo = validated_data.get('photo', instance.photo)
+        instance.phone = validated_data.get('phone', instance.phone)
+        # instance.ish_turi = validated_data.get('ish_turi', instance.ish_turi)
+        instance.id_raqam = validated_data.get('id_raqam', instance.id_raqam)
+        instance.bulimi = validated_data.get('bulimi', instance.bulimi)
+        instance.save()
+        return instance
         
         
 class Ish_turiSerializer(serializers.ModelSerializer):
