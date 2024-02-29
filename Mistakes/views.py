@@ -225,11 +225,11 @@ class HisobotDetail(APIView):
             return Response({'xato': "bu id xato"})
     
     def patch(self, request, id):
-        a = request.data.get('photo', None)
+        a = request.data.getlist('photo', [])
         hisobot = Hisobot.objects.get(id=id)
         serializer = HisobotSerializer(hisobot, data = request.data, partial=True)
         if serializer.is_valid():
-            s = serializer.save()
+            serializer.save()
             if a:
                 for x in a:
                     n = Photo.objects.create(photo=x)
