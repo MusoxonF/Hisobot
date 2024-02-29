@@ -3,11 +3,18 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, Toke
 from .models import *
 
 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super(MyTokenObtainPairSerializer, self).validate(attrs)
         user = User.objects.get(username=self.user.username)
         data['status'] = user.status
+        data['gender'] = user.gender
         data['id'] = user.id
         return data
 
