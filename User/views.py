@@ -9,6 +9,7 @@ from rest_framework import permissions
 from rest_framework.parsers import MultiPartParser, JSONParser
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class ChangePasswordView(APIView):
@@ -27,10 +28,13 @@ class ChangePasswordView(APIView):
             user.set_password(new_password)
             user.save()
             # If you are using TokenAuthentication, you may need to update the token here
-            token = Token.objects.get(user=user)
-            token.delete()
-            Token.objects.create(user=user)
-            return Response({"detail": "Password updated successfully"}, status=status.HTTP_200_OK)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            return Response({
+                "detail": "Password updated successfully",
+                "access_token": access_token
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
