@@ -229,7 +229,7 @@ class HisobotDetail(APIView):
         hisobot = Hisobot.objects.get(id=id)
         serializer = HisobotSerializer(hisobot, data = request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            s = serializer.save()
             if a:
                 for x in a:
                     n = Photo.objects.create(photo=x)
