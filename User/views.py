@@ -34,7 +34,7 @@ class ChangePasswordView(APIView):
             return Response({
                 "detail": "Password updated successfully",
                 "access_token": access_token,
-                "refresh_token": refresh
+                "refresh_token": str(refresh)
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
