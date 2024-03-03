@@ -42,4 +42,4 @@ class XodimStatistic(APIView):
                     'butun_soni': j.butun_soni,
                 
                 })
-        return Response({'data':l})
+                return Response({'data':l})

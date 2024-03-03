@@ -31,7 +31,7 @@ class Hisobot(models.Model):
     izoh = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
-    mahsulot = models.ForeignKey(Maxsulot, on_delete=models.CASCADE, related_name = 'maxsluot')
+    mahsulot = models.ForeignKey(Maxsulot, on_delete=models.CASCADE, related_name = 'maxsulot')
     xato_soni = models.PositiveIntegerField(default=0)
     butun_soni = models.PositiveIntegerField(default=0)
     ish_vaqti = models.PositiveIntegerField(null=True)
