@@ -31,15 +31,15 @@ class XodimStatistic(APIView):
                     'butun_soni': sum_butun['butun_soni__sum'],
                 }
             )
+            print(s)
             for j in h:
                 l.append({
-                    'data':{
-                    # 'jami_xato_soni': s.xato_soni,
-                    # 'jami_butun_soni': s.butun_soni,
+                    'jami_xato_soni': sum_xato,
+                    'jami_butun_soni': sum_butun,
                     'mahsulot_name': j.mahsulot.name,
                     'xodimi': i.first_name,
                     'xato_soni': j.xato_soni,
                     'butun_soni': j.butun_soni,
                 
-                }})
-        return Response([l])
+                })
+        return Response({'data':l})

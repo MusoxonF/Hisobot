@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import *
 from .serializers import *
+from Statistika.views import *
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -100,7 +101,23 @@ class XodimDetail(APIView):
         try:
             xodim = Xodim.objects.get(id=id)
             ser = XodimSerializer(xodim)
-            return Response(ser.data)
+            x = Xodim.objects.get(id=id)
+            l=[]
+            h = Hisobot.objects.filter(xodim=x)
+            # h = Hisobot.objects.filter(xodim=i).filter(mahsulot=j.mahsulot)
+            sum_xato = h.aggregate(Sum('xato_soni'))
+            sum_butun = h.aggregate(Sum('butun_soni'))
+            for j in h:
+                l.append({
+                    'id': x.id,
+                    'jami_xato_soni': sum_xato,
+                    'jami_butun_soni': sum_butun,
+                    'mahsulot_name': j.mahsulot.name,
+                    'xodimi': x.first_name,
+                    'xato_soni': j.xato_soni,
+                    'butun_soni': j.butun_soni,
+                })
+                return Response([ser.data, l])
         except:
             return Response({'xato': "bu id xato"})
 
