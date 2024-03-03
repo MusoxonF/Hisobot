@@ -36,4 +36,4 @@ class Hisobot(models.Model):
     butun_soni = models.PositiveIntegerField(default=0)
     ish_vaqti = models.PositiveIntegerField(null=True)
     def __str__(self):
-        return f'{self.xodim}/{self.user}/{self.xato}'
+        return f'{self.xodim}/{self.user}/{self.xato}/{self.mahsulot}'

@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import *
+from Statistika.views import *
 
 urlpatterns = [
     path('photo/', PhotoList.as_view(), name='photo'),
@@ -15,4 +16,6 @@ urlpatterns = [
     path('xatolar/<int:id>/', ProblemDetail.as_view(), name='xatolar_detail'),
     path('missed/', HisobotView.as_view(), name='missed'),
     path('missed/<int:id>/', HisobotDetail.as_view(), name='missed_detail'),
+
+    path('statistics/', XodimStatistic.as_view(), name='statistics'),
 ]
