@@ -124,8 +124,8 @@ class XodimDetail(APIView):
 
             for j in h:
                 if j.mahsulot.name in l:
-                    l.xato_soni += j.xato_soni
-                    l.butun_soni += j.butun_soni
+                    l.['xato_soni'] += j.xato_soni
+                    l.['butun_soni'] += j.butun_soni
                 else:
                     l.append({
                         'mahsulot_name': j.mahsulot.name,
