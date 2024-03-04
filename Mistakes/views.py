@@ -5,9 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 
+from django.db.models import Sum, Max, Min, Count, F, Q, Avg
 from .serializers import *
 from .models import *
 from User.serializers import *
+from User.models import *
 
 
 class PhotoList(ListCreateAPIView):
@@ -96,12 +98,21 @@ class BolimView(APIView):
 class BolimDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        try:
-            bolim = Bolim.objects.get(id=id)
-            ser = BolimSerializer(bolim)
-            return Response(ser.data)
-        except:
-            return Response({'xato': "bu id xato"})
+        # try:
+        bolim = Bolim.objects.get(id=id)
+        ser = BolimSerializer(bolim)
+        xodim = Xodim.objects.filter(bulimi=bolim)
+        d={}
+        for j in xodim:
+            # h = Hisobot.objects.filter(xodim=j)
+            # a = j.bulim.name
+            bolim_mistakes = Hisobot.objects.filter(xodim=j)
+            xodim_mistakes_aggregated = bolim_mistakes.aggregate(Sum('xato_soni'))
+            d[str(j.bulimi.name)] = xodim_mistakes_aggregated
+            print(d)
+        return Response(ser.data)
+        # except:
+        #     return Response({'xato': "bu id xato"})
 
     def patch(self, request, id):
         bolim = Bolim.objects.get(id=id)
