@@ -7,7 +7,7 @@ class Photo(models.Model):
 
 
 class Maxsulot(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     mahsulot_id = models.CharField(max_length = 5, unique=True)
 
     def __str__(self):
@@ -15,7 +15,7 @@ class Maxsulot(models.Model):
 
 
 class Problem(models.Model):
-    name = models.TextField()
+    name = models.TextField(unique=True)
     xato_id = models.CharField(max_length = 5, unique=True)
 
     def __str__(self):

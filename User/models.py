@@ -10,10 +10,10 @@ class User(AbstractUser):
         ]
 
     STATUS_CHOICES = (
-        ('Diretor', 'Diretor'),
+        ('Direktor', 'Direktor'),
         ('Admin', 'Admin'),
         ('Tekshiruvchi', 'Tekshiruvchi'),
-        ('Bulum', 'Bulum'),
+        ('Bulim', 'Bulim'),
     )
     status = models.CharField(max_length=13, choices=STATUS_CHOICES)
     gender = models.CharField(max_length=6, choices = JINS)
@@ -24,14 +24,14 @@ class User(AbstractUser):
 
 
 class Ish_turi(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     ish_id = models.CharField(max_length = 5, unique=True)
     def __str__(self):
         return self.name
 
 
 class Bolim(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     bulim_id = models.CharField(max_length = 5, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

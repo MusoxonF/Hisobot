@@ -101,7 +101,9 @@ class XodimDetail(APIView):
         try:
             xodim = Xodim.objects.get(id=id)
             ser = XodimSerializer(xodim)
+            l=[]
             s=[]
+            m=[]
             h = Hisobot.objects.filter(xodim=xodim)
             sum_xato = h.aggregate(soni=Sum('xato_soni'))
             sum_butun = h.aggregate(soni=Sum('butun_soni'))
@@ -111,14 +113,12 @@ class XodimDetail(APIView):
                 'Jami_xato': sum_xato,
                 'Jami_butun': sum_butun,
             })
-
             d={}
             for j in h:
                 a = j.mahsulot.name
                 xodim_mistakes = Hisobot.objects.filter(xodim=j.xodim, mahsulot=j.mahsulot)
                 xodim_mistakes_aggregated = xodim_mistakes.aggregate(total_xato_soni=Sum('xato_soni'))
                 d[str(j.mahsulot.name)] = xodim_mistakes_aggregated['total_xato_soni']
-
             l={}
             for j in h:
                 r={}
@@ -129,10 +129,11 @@ class XodimDetail(APIView):
                     r['xato_soni'] =j.xato_soni
                     r['butun_soni'] =j.butun_soni
                     l[str(j.mahsulot.name)] = r
+                print(l)
             return Response({'data':ser.data,
                                     'all_statistic': s,
                                     'mahsulot_xato_soni':d,
-                                    ['statistic']:l,
+                                    'statistic':l,
                                     })
         except:
             return Response({'xato': "bu id xato"})
