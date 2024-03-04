@@ -98,44 +98,44 @@ class XodimView(APIView):
 class XodimDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        try:
-            xodim = Xodim.objects.get(id=id)
-            ser = XodimSerializer(xodim)
-            l=[]
-            s=[]
-            m=[]
-            h = Hisobot.objects.filter(xodim=xodim)
-            sum_xato = h.aggregate(soni=Sum('xato_soni'))
-            sum_butun = h.aggregate(soni=Sum('butun_soni'))
-            s.append({
-                'id': xodim.id,
-                'xodimi': xodim.first_name,
-                'Jami_xato': sum_xato,
-                'Jami_butun': sum_butun,
-            })
-            d={}
-            for j in h:
-                a = j.mahsulot.name
-                xodim_mistakes = Hisobot.objects.filter(xodim=j.xodim, mahsulot=j.mahsulot)
-                xodim_mistakes_aggregated = xodim_mistakes.aggregate(total_xato_soni=Sum('xato_soni'))
-                d[str(j.mahsulot.name)] = xodim_mistakes_aggregated['total_xato_soni']
-            l={}
-            for j in h:
-                if str(j.mahsulot.name) in l:
-                    l['xato_soni'] += j.xato_soni
-                    l['butun_soni'] += j.butun_soni
-                else:
-                    l[str(j.mahsulot.name)] =j.mahsulot.name
-                    l['xato_soni'] =j.xato_soni
-                    l['butun_soni'] =j.butun_soni
-                    
-            return Response({'data':ser.data,
-                                    'all_statistic': s,
-                                    'mahsulot_xato_soni':d,
-                                    'statistic':l,
-                                    })
-        except:
-            return Response({'xato': "bu id xato"})
+        # try:
+        xodim = Xodim.objects.get(id=id)
+        ser = XodimSerializer(xodim)
+        l=[]
+        s=[]
+        m=[]
+        h = Hisobot.objects.filter(xodim=xodim)
+        sum_xato = h.aggregate(soni=Sum('xato_soni'))
+        sum_butun = h.aggregate(soni=Sum('butun_soni'))
+        s.append({
+            'id': xodim.id,
+            'xodimi': xodim.first_name,
+            'Jami_xato': sum_xato,
+            'Jami_butun': sum_butun,
+        })
+        d={}
+        for j in h:
+            a = j.mahsulot.name
+            xodim_mistakes = Hisobot.objects.filter(xodim=j.xodim, mahsulot=j.mahsulot)
+            xodim_mistakes_aggregated = xodim_mistakes.aggregate(total_xato_soni=Sum('xato_soni'))
+            d[str(j.mahsulot.name)] = xodim_mistakes_aggregated['total_xato_soni']
+        l={}
+        for j in h:
+            if str(j.mahsulot.name) in l:
+                l['xato_soni'] += j.xato_soni
+                l['butun_soni'] += j.butun_soni
+            else:
+                l[str(j.mahsulot.name)] =j.mahsulot.name
+                l['xato_soni'] =j.xato_soni
+                l['butun_soni'] =j.butun_soni
+                print(l)
+        return Response({'data':ser.data,
+                                'all_statistic': s,
+                                'mahsulot_xato_soni':d,
+                                'statistic':l,
+                                })
+        # except:
+        #     return Response({'xato': "bu id xato"})
 
     def patch(self, request, id):
         a = request.data.getlist('ish_turi', [])
