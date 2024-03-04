@@ -49,9 +49,15 @@ class SignUpView(APIView):
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+        user = User.objects.all()
+        for i in user:
+            if i.status == 'Direktor':
+                if serializer.is_valid() and serializer.status == 'Direktor':
+                    return Response({'xabar':'Direktor oldin yaratilgan'})
+            else:
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data)
         return Response(serializer.errors)
 
 
