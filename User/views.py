@@ -51,17 +51,13 @@ class SignUpView(APIView):
         serializer = UserSerializer(data=request.data)
         
         if serializer.is_valid():
-            if serializer.validated_data['status'] == 'Direktor':
-                # Check if there is already a 'Direktor' user
-                if User.objects.filter(status='Direktor').exists():
-                    return Response({'xabar': 'Direktor oldin yaratilgan'}, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            status_value = serializer.validated_data.get('status')
+            if status_value in ['Direktor', 'Admin']:
+                if User.objects.filter(status=status_value).exists():
+                    return Response({'xabar': f'{status_value} oldin yaratilgan'})
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 class SignUpDetail(APIView):
@@ -76,11 +72,15 @@ class SignUpDetail(APIView):
 
     def patch(self, request, id):
         user = User.objects.get(id=id)
-        ser = UserSerializer(user, data = request.data, partial=True)
+        serializer = UserSerializer(user, data = request.data, partial=True)
         if ser.is_valid():
-            ser.save()
-            return Response(ser.data)
-        return Response(ser.errors)
+            status_value = serializer.validated_data.get('status')
+            if status_value in ['Direktor', 'Admin']:
+                if User.objects.exclude(id=id).filter(status=status_value).exists():
+                    return Response({'xabar': f'{status_value} oldin yaratilgan'})
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
     def delete(self, request, id):
         user = User.objects.get(id=id)
