@@ -73,7 +73,7 @@ class SignUpDetail(APIView):
     def patch(self, request, id):
         user = User.objects.get(id=id)
         serializer = UserSerializer(user, data = request.data, partial=True)
-        if ser.is_valid():
+        if serializer.is_valid():
             status_value = serializer.validated_data.get('status')
             if status_value in ['Direktor', 'Admin']:
                 if User.objects.exclude(id=id).filter(status=status_value).exists():
