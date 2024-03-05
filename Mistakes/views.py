@@ -102,15 +102,33 @@ class BolimDetail(APIView):
         bolim = Bolim.objects.get(id=id)
         ser = BolimSerializer(bolim)
         xodim = Xodim.objects.filter(bulimi=bolim)
-        d={}
-        for j in xodim:
-            # h = Hisobot.objects.filter(xodim=j)
-            # a = j.bulim.name
-            bolim_mistakes = Hisobot.objects.filter(xodim=j)
-            xodim_mistakes_aggregated = bolim_mistakes.aggregate(Sum('xato_soni'))
-            d[str(j.bulimi.name)] = xodim_mistakes_aggregated
-            print(d)
-        return Response(ser.data)
+        for x in xodim:
+            h = Hisobot.objects.filter(xodim=x)
+        l=[]
+        for i in h:
+            found = False
+            for item in l:
+                if item['bulim_name'] == i.xodim.bulimi.name:
+                    item['xato_soni'] += i.xato_soni
+                    item['butun_soni'] += i.butun_soni
+                    found = True
+                    break
+            if not found:
+                l.append({'bulim_name': i.xodim.bulimi.name, 'xato_soni': i.xato_soni, 'butun_soni': i.butun_soni})
+        # for i in h:
+        #     found2 = False
+        #     for item in l:
+        #         if item['xato_name'] == i.xato.name:
+        #             item['xato_soni'] += i.xato_soni
+        #             found2 = True
+        #             break
+        #     if not found2:
+        #         l.append({'xato_name': i.xato.name, 'xato_soni': i.xato_soni})
+        return Response({'data':ser.data,
+                                # 'all_statistic': s,
+                                # 'mahsulot_xato_soni':d,
+                                'statistic':l,
+                                })
         # except:
         #     return Response({'xato': "bu id xato"})
 
