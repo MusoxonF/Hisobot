@@ -128,17 +128,19 @@ class XodimDetail(APIView):
                 xodim_mistakes = Hisobot.objects.filter(xodim=j.xodim, mahsulot=j.mahsulot)
                 xodim_mistakes_aggregated = xodim_mistakes.aggregate(total_xato_soni=Sum('xato_soni'))
                 d[str(j.mahsulot.name)] = xodim_mistakes_aggregated['total_xato_soni']
-            l={}
+            l = []
+
             for j in h:
-                r={}
-                if j.mahsulot.name in l:
-                    l[str(j.mahsulot.name)]['xato_soni'] += j.xato_soni
-                    l[str(j.mahsulot.name)]['butun_soni'] += j.butun_soni
-                else:
-                    r['xato_soni'] =j.xato_soni
-                    r['butun_soni'] =j.butun_soni
-                    l[str(j.mahsulot.name)] = r
-                print(l)
+                found = False
+                for item in l:
+                    if item['mahsulot_name'] == j.mahsulot.name:
+                        item['xato_soni'] += j.xato_soni
+                        item['butun_soni'] += j.butun_soni
+                        found = True
+                        break
+                if not found:
+                    l.append({'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni})
+            
             return Response({'data':ser.data,
                                     'all_statistic': s,
                                     'mahsulot_xato_soni':d,
