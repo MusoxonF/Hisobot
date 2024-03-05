@@ -112,7 +112,6 @@ class BolimDetail(APIView):
                 for item in l:
                     if item['bulim_name'] == i.xodim.bulimi.name:
                         found = True
-                        break
                 if not found:
                     l.append({'bulim_name': i.xodim.bulimi.name, 'xato_soni': sum_xato, 'butun_soni': sum_butun})
             return Response({'data':ser.data,
