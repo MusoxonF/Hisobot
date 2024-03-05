@@ -104,17 +104,17 @@ class BolimDetail(APIView):
         xodim = Xodim.objects.filter(bulimi=bolim)
         for x in xodim:
             h = Hisobot.objects.filter(xodim=x)
+        sum_xato = h.aggregate(soni=Sum('xato_soni'))
+        sum_butun = h.aggregate(soni=Sum('butun_soni'))
         l=[]
         for i in h:
             found = False
             for item in l:
                 if item['bulim_name'] == i.xodim.bulimi.name:
-                    item['xato_soni'] += i.xato_soni
-                    item['butun_soni'] += i.butun_soni
                     found = True
                     break
             if not found:
-                l.append({'bulim_name': i.xodim.bulimi.name, 'xato_soni': i.xato_soni, 'butun_soni': i.butun_soni})
+                l.append({'bulim_name': i.xodim.bulimi.name, 'xato_soni': sum_xato, 'butun_soni': sum_butun})
         # for i in h:
         #     found2 = False
         #     for item in l:
