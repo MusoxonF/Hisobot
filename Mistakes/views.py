@@ -98,30 +98,27 @@ class BolimView(APIView):
 class BolimDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        # try:
-        bolim = Bolim.objects.get(id=id)
-        ser = BolimSerializer(bolim)
-        xodim = Xodim.objects.filter(bulimi=bolim)
-        for x in xodim:
-            h = Hisobot.objects.filter(xodim=x)
-            sum_xato = h.aggregate(soni=Sum('xato_soni'))
-            sum_butun = h.aggregate(soni=Sum('butun_soni'))
-            l=[]
-            for i in h:
-                found = False
-                for item in l:
-                    if item['bulim_name'] == i.xodim.bulimi.name:
-                        found = True
-                if not found:
-                    l.append({'bulim_name': i.xodim.bulimi.name, 'xato_soni': sum_xato, 'butun_soni': sum_butun})
-            return Response({'data':ser.data,
-                                    # 'all_statistic': s,
-                                    # 'mahsulot_xato_soni':d,
-                                    'statistic':l,
-                                    })
-        # except:
-        #     return Response({'xato': "bu id xato"})
+        try:
+            bolim = Bolim.objects.get(id=id)
+            ser = BolimSerializer(bolim)
+            xodim = Xodim.objects.filter(bulimi=bolim)
+            l = []
 
+            for x in xodim:
+                h = Hisobot.objects.filter(xodim=x)
+                sum_xato = h.aggregate(soni=Sum('xato_soni'))
+                sum_butun = h.aggregate(soni=Sum('butun_soni'))
+
+                l.append({
+                    'bulim_name': x.bulimi.name,
+                    'xato_soni': sum_xato['soni'] if sum_xato['soni'] else 0,
+                    'butun_soni': sum_butun['soni'] if sum_butun['soni'] else 0
+                })
+
+            return Response({'data': ser.data, 'statistic': l})
+        except Bolim.DoesNotExist:
+            return Response({'xato': "bu id xato"})
+            
     def patch(self, request, id):
         bolim = Bolim.objects.get(id=id)
         serializer = BolimSerializer(bolim, data = request.data, partial=True)
