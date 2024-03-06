@@ -89,14 +89,9 @@ class BolimView(APIView):
 
     def post(self, request):
         serializer = BolimSerializer(data=request.data)
-        bolim = Bolim.objects.all()
-        for i in bolim:
-            if serializer.is_valid():
-                user_value = serializer.validated_data.get('user')
-                if user_value in i:
-                    return Response({'message': 'bu user ishlatilgan'})
-                serializer.save()
-                return Response(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
         return Response(serializer.errors)
 
 
