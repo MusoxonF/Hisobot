@@ -96,28 +96,63 @@ class BolimView(APIView):
 
 
 class BolimDetail(APIView):
-    parser_classes = [JSONParser, MultiPartParser]
+    parser_classes = (MultiPartParser, JSONParser)
     def get(self, request, id):
-        try:
-            bolim = Bolim.objects.get(id=id)
-            ser = BolimSerializer(bolim)
-            xodim = Xodim.objects.filter(bulimi=bolim)
-            l = []
+        bulim = Bolim.objects.get(id=id)
+        ser = BolimSerializer(bulim)
+        a = {}
+        if Hisobot.objects.filter(xodim__bulimi=bulim):
+            missed = Hisobot.objects.filter(xodim__bulimi=bulim)
+            sum_xato = missed.aggregate(soni=Sum('xato_soni'))
+            sum_butun = missed.aggregate(soni=Sum('butun_soni'))
+            a[str('bulim_name')]=str(bulim.name)
+            a[str('bulim_id')]=str(bulim.bulim_id)
+            a[str('bulim_boshliq')]=str(bulim.user.first_name)
+            a[str('xato_soni')]=sum_xato
+            a[str('butun_soni')]=sum_butun
+            a[str('hisobot_soni')]=len(missed)
+            b = missed.aggregate(Count('xodim'))
+            a[str('xodim_soni')]=b
 
-            for x in xodim:
-                h = Hisobot.objects.filter(xodim=x)
-                sum_xato = h.aggregate(soni=Sum('xato_soni'))
-                sum_butun = h.aggregate(soni=Sum('butun_soni'))
+            c = []
+            for j in missed:
+                print(j)
+                found = False
+                for item in c:
+                    if item['mahsulot_name'] == j.mahsulot.name:
+                        item['mahsulot_id'] += j.mahsulot.mahsulot_id
+                        item['xato_soni'] += j.xato_soni
+                        item['butun_soni'] += j.butun_soni
+                        found = True
+                        break
+                if not found:
+                    c.append({'mahsulot_name': j.mahsulot.name, 'mahsulot_id': j.mahsulot.mahsulot_id, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni})
 
-                l.append({
-                    'bulim_name': x.bulimi.name,
-                    'xato_soni': sum_xato['soni'] if sum_xato['soni'] else 0,
-                    'butun_soni': sum_butun['soni'] if sum_butun['soni'] else 0
-                })
+            d = []
+            for j in missed:
+                print(j)
+                found = False
+                for item in d:
+                    if item['xato_name'] == j.xato.name:
+                        item['xato_id'] = j.xato.xato_id
+                        item['mahsulot_name'] = j.mahsulot.name
+                        item['xato_soni'] += j.xato_soni
+                        found = True
+                        break
+                if not found:
+                    d.append({'xato_name': j.xato.name, 'xato_id': j.xato.xato_id, 'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni})
 
-            return Response({'data': ser.data, 'statistic': l})
-        except Bolim.DoesNotExist:
-            return Response({'xato': "bu id xato"})
+            return Response({'data':ser.data,
+                         'statistic':a,
+                         'mahsulot':c,
+                         'xato': d
+
+                         })
+        return Response({'data':ser.data,
+                         'statistic':None,
+                         'mahsulot':None,
+                         'xato': None
+                         })
             
     def patch(self, request, id):
         bolim = Bolim.objects.get(id=id)
