@@ -54,7 +54,7 @@ class SignUpView(APIView):
             status_value = serializer.validated_data.get('status')
             if status_value in ['Direktor', 'Admin']:
                 if User.objects.filter(status=status_value).exists():
-                    return Response({'xabar': f'{status_value} oldin yaratilgan'})
+                    return Response({'message': f'{status_value} oldin yaratilgan'})
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
@@ -68,7 +68,7 @@ class SignUpDetail(APIView):
             ser = UserSerializer(user)
             return Response(ser.data)
         except:
-            return Response({'xato': "bu id xato"})
+            return Response({'message': "bu id xato"})
 
     def patch(self, request, id):
         user = User.objects.get(id=id)
@@ -77,7 +77,7 @@ class SignUpDetail(APIView):
             status_value = serializer.validated_data.get('status')
             if status_value in ['Direktor', 'Admin']:
                 if User.objects.exclude(id=id).filter(status=status_value).exists():
-                    return Response({'xabar': f'{status_value} oldin yaratilgan'})
+                    return Response({'message': f'{status_value} oldin yaratilgan'})
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
@@ -128,8 +128,8 @@ class XodimDetail(APIView):
                 xodim_mistakes = Hisobot.objects.filter(xodim=j.xodim, mahsulot=j.mahsulot)
                 xodim_mistakes_aggregated = xodim_mistakes.aggregate(total_xato_soni=Sum('xato_soni'))
                 d[str(j.mahsulot.name)] = xodim_mistakes_aggregated['total_xato_soni']
-            l = []
 
+            l = []
             for j in h:
                 found = False
                 for item in l:
@@ -140,14 +140,14 @@ class XodimDetail(APIView):
                         break
                 if not found:
                     l.append({'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni})
-            
+
             return Response({'data':ser.data,
                                     'all_statistic': s,
                                     'mahsulot_xato_soni':d,
                                     'statistic':l,
                                     })
         except:
-            return Response({'xato': "bu id xato"})
+            return Response({'message': "bu id xato"})
 
     def patch(self, request, id):
         a = request.data.getlist('ish_turi', [])

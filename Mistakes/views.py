@@ -33,12 +33,12 @@ class PhotoEditView(APIView):
             ser = PhotoSerializer(photo)
             return Response(ser.data)
         except:
-            return Response({'xato': "bu id xato"})
+            return Response({'message': "bu id xato"})
 
     def delete(self, request, id):
         photo = Photo.objects.get(id=id)
         photo.delete()
-        return Response({'deleted':'successfully'})
+        return Response({'message':'successfully deleted'})
 
 
 class Ish_TuriView(APIView):
@@ -64,7 +64,7 @@ class Ish_TuriDetail(APIView):
             ser = Ish_turiSerializer(ish_turi)
             return Response(ser.data)
         except:
-            return Response({'xato': "bu id xato"})
+            return Response({'message': "bu id xato"})
 
     def patch(self, request, id):
         ish_turi = Ish_turi.objects.get(id=id)
@@ -89,9 +89,14 @@ class BolimView(APIView):
 
     def post(self, request):
         serializer = BolimSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+        bolim = Bolim.objects.all()
+        for i in bolim.user:
+            if serializer.is_valid():
+                user_value = serializer.validated_data.get('user')
+                if user_value == i:
+                    return Response({'message': 'bu user ishlatilgan'})
+                serializer.save()
+                return Response(serializer.data)
         return Response(serializer.errors)
 
 
@@ -116,7 +121,6 @@ class BolimDetail(APIView):
 
             c = []
             for j in missed:
-                print(j)
                 found = False
                 for item in c:
                     if item['mahsulot_name'] == j.mahsulot.name:
@@ -130,7 +134,6 @@ class BolimDetail(APIView):
 
             d = []
             for j in missed:
-                print(j)
                 found = False
                 for item in d:
                     if item['xato_name'] == j.xato.name:
@@ -191,7 +194,7 @@ class MaxsulotDetail(APIView):
             ser = MaxsulotSerializer(maxsulot)
             return Response(ser.data)
         except:
-            return Response({'xato': "bu id xato"})
+            return Response({'message': "bu id xato"})
 
     def patch(self, request, id):
         maxsulot = Maxsulot.objects.get(id=id)
@@ -230,7 +233,7 @@ class ProblemDetail(APIView):
             ser = ProblemSerializer(problem)
             return Response(ser.data)
         except:
-            return Response({'xato': "bu id xato"})
+            return Response({'message': "bu id xato"})
 
     def patch(self, request, id):
         problem = Problem.objects.get(id=id)
@@ -273,7 +276,7 @@ class HisobotDetail(APIView):
             ser = HisobotSerializer(hisobot)
             return Response(ser.data)
         except:
-            return Response({'xato': "bu id xato"})
+            return Response({'message': "bu id xato"})
     
     def patch(self, request, id):
         a = request.data.getlist('photo', [])
