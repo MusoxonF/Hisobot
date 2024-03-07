@@ -98,59 +98,67 @@ class BolimView(APIView):
 class BolimDetail(APIView):
     parser_classes = (MultiPartParser, JSONParser)
     def get(self, request, id):
-        bulim = Bolim.objects.get(id=id)
-        ser = BolimSerializer(bulim)
-        a = {}
-        if Hisobot.objects.filter(xodim__bulimi=bulim):
-            missed = Hisobot.objects.filter(xodim__bulimi=bulim)
-            sum_xato = missed.aggregate(soni=Sum('xato_soni'))
-            sum_butun = missed.aggregate(soni=Sum('butun_soni'))
-            a[str('bulim_name')]=str(bulim.name)
-            a[str('bulim_id')]=str(bulim.bulim_id)
-            a[str('bulim_boshliq')]=str(bulim.user.first_name)
-            a[str('xato_soni')]=sum_xato
-            a[str('butun_soni')]=sum_butun
-            a[str('hisobot_soni')]=len(missed)
-            b = missed.aggregate(Count('xodim'))
-            a[str('xodim_soni')]=b
+        try:
+            bulim = Bolim.objects.get(id=id)
+            xod = Xodim.objects.filter(bulimi = bulim)
+            ser = BolimSerializer(bulim)
+            xodim = XodimSerializer(xod, many=True)
+            print(xodim)
+            a = {}
+            if Hisobot.objects.filter(xodim__bulimi=bulim):
+                missed = Hisobot.objects.filter(xodim__bulimi=bulim)
+                sum_xato = missed.aggregate(soni=Sum('xato_soni'))
+                sum_butun = missed.aggregate(soni=Sum('butun_soni'))
+                a[str('bulim_name')]=str(bulim.name)
+                a[str('bulim_id')]=str(bulim.bulim_id)
+                a[str('bulim_boshliq')]=str(bulim.user.first_name)
+                a[str('xato_soni')]=sum_xato
+                a[str('butun_soni')]=sum_butun
+                a[str('hisobot_soni')]=len(missed)
+                b = missed.aggregate(Count('xodim'))
+                a[str('xodim_soni')]=b
 
-            c = []
-            for j in missed:
-                found = False
-                for item in c:
-                    if item['mahsulot_name'] == j.mahsulot.name:
-                        item['mahsulot_id'] += j.mahsulot.mahsulot_id
-                        item['xato_soni'] += j.xato_soni
-                        item['butun_soni'] += j.butun_soni
-                        found = True
-                        break
-                if not found:
-                    c.append({'mahsulot_name': j.mahsulot.name, 'mahsulot_id': j.mahsulot.mahsulot_id, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni})
+                c = []
+                for j in missed:
+                    found = False
+                    for item in c:
+                        if item['mahsulot_name'] == j.mahsulot.name:
+                            item['mahsulot_id'] += j.mahsulot.mahsulot_id
+                            item['xato_soni'] += j.xato_soni
+                            item['butun_soni'] += j.butun_soni
+                            found = True
+                            break
+                    if not found:
+                        c.append({'mahsulot_name': j.mahsulot.name, 'mahsulot_id': j.mahsulot.mahsulot_id, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni})
 
-            d = []
-            for j in missed:
-                found = False
-                for item in d:
-                    if item['xato_name'] == j.xato.name:
-                        item['xato_id'] = j.xato.xato_id
-                        item['mahsulot_name'] = j.mahsulot.name
-                        item['xato_soni'] += j.xato_soni
-                        found = True
-                        break
-                if not found:
-                    d.append({'xato_name': j.xato.name, 'xato_id': j.xato.xato_id, 'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni})
+                d = []
+                for j in missed:
+                    found = False
+                    for item in d:
+                        if item['xato_name'] == j.xato.name:
+                            item['xato_id'] = j.xato.xato_id
+                            item['mahsulot_name'] = j.mahsulot.name
+                            item['xato_soni'] += j.xato_soni
+                            found = True
+                            break
+                    if not found:
+                        d.append({'xato_name': j.xato.name, 'xato_id': j.xato.xato_id, 'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni})
 
+                return Response({'data':ser.data,
+                             'statistic':a,
+                             'mahsulot':c,
+                             'xato': d,
+                             'xodimlar':xodim.data,
+
+                             })
             return Response({'data':ser.data,
-                         'statistic':a,
-                         'mahsulot':c,
-                         'xato': d
-
-                         })
-        return Response({'data':ser.data,
-                         'statistic':None,
-                         'mahsulot':None,
-                         'xato': None
-                         })
+                             'statistic':None,
+                             'mahsulot':None,
+                             'xato': None,
+                             'xodimlar':None
+                             })
+        except:
+            return Response({'message': "bu id xato"})
             
     def patch(self, request, id):
         bolim = Bolim.objects.get(id=id)
@@ -184,12 +192,23 @@ class MaxsulotView(APIView):
 class MaxsulotDetail(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request, id):
-        try:
-            maxsulot = Maxsulot.objects.get(id=id)
-            ser = MaxsulotSerializer(maxsulot)
-            return Response(ser.data)
-        except:
-            return Response({'message': "bu id xato"})
+        mahsulot = Maxsulot.objects.get(id=id)
+        ser = MaxsulotSerializer(mahsulot)
+        a = []
+        missed = Hisobot.objects.filter(mahsulot=mahsulot)
+        for j in missed:
+            found = False
+            for item in a:
+                if item['xato_name'] == j.xato.name:
+                    item['xato_soni'] += j.xato_soni
+                    item['butun_soni'] += j.butun_soni
+                    found = True
+                    break
+            if not found:
+                a.append({'xato_name': j.xato.name , 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni})
+
+        return Response({'data':ser.data,
+                         'statistic':a})
 
     def patch(self, request, id):
         maxsulot = Maxsulot.objects.get(id=id)
@@ -290,7 +309,5 @@ class HisobotDetail(APIView):
         hisobot = Hisobot.objects.get(id=id)
         hisobot.delete()
         return Response(status=204)
-
-        
 
 
