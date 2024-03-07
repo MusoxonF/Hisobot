@@ -116,19 +116,21 @@ class XodimDetail(APIView):
             h = Hisobot.objects.filter(xodim=xodim)
             sum_xato = h.aggregate(soni=Sum('xato_soni'))
             sum_butun = h.aggregate(soni=Sum('butun_soni'))
+            f = sum_xato['soni']*100/(sum_xato['soni'] + sum_butun['soni'])
+            u = sum_butun['soni']*100/(sum_xato['soni'] + sum_butun['soni'])
             s.append({
                 'id': xodim.id,
                 'xodimi': xodim.first_name,
                 'Jami_xato': sum_xato,
                 'Jami_butun': sum_butun,
+                'Xato_foizi': round(f, 2),
+                'Butun_foizi':round(u, 2)
             })
             d={}
             for j in h:
-                a = j.mahsulot.name
                 xodim_mistakes = Hisobot.objects.filter(xodim=j.xodim, mahsulot=j.mahsulot)
                 xodim_mistakes_aggregated = xodim_mistakes.aggregate(total_xato_soni=Sum('xato_soni'))
                 d[str(j.mahsulot.name)] = xodim_mistakes_aggregated['total_xato_soni']
-
             l = []
             for j in h:
                 found = False
@@ -139,7 +141,12 @@ class XodimDetail(APIView):
                         found = True
                         break
                 if not found:
-                    l.append({'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni})
+                    l.append({'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni, 'Xato_foizi': None, 'Butun_foizi': None})
+            for i in h:
+                for item in l:
+                    if item['mahsulot_name'] == i.mahsulot.name:
+                        item['Xato_foizi'] = round(item['xato_soni']*100/(item['xato_soni'] + item['butun_soni']), 2)
+                        item['Butun_foizi'] = round(item['butun_soni']*100/(item['xato_soni'] + item['butun_soni']), 2) 
 
             return Response({'data':ser.data,
                                     'all_statistic': s,
