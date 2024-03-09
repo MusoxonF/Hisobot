@@ -12,6 +12,9 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from datetime import datetime, timedelta
+from django.utils import timezone
+
 
 class ChangePasswordView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
@@ -92,9 +95,52 @@ class XodimView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     permission_classes = [permissions.AllowAny]
     def get(self, request):
+        now = timezone.now()
+        
+        # Calculate datetime ranges for different time periods
+        one_year_ago = now - timedelta(days=365)
+        six_months_ago = now - timedelta(days=30*6)
+        three_months_ago = now - timedelta(days=30*3)
+        one_month_ago = now - timedelta(days=30)
+        one_week_ago = now - timedelta(days=7)
+        one_day_ago = now - timedelta(days=1)
+
+        # Initialize a list to store statistics for different time periods
+        statistics = []
+
+        # Function to calculate statistics for a given time period
+        def calculate_statistics(start_date, end_date):
+            xodims = Xodim.objects.all()
+            data = []
+            for xodim in xodims:
+                # Filter Hisobot objects based on xodim and time period
+                hisobots = Hisobot.objects.filter(xodim=xodim, created_at__range=[start_date, end_date])
+                total_ish_vaqti = 0
+                total_xato_soni = 0
+                total_butun_soni = 0
+                for hisobot in hisobots:
+                    total_ish_vaqti += hisobot.ish_vaqti
+                    total_xato_soni += hisobot.xato_soni
+                    total_butun_soni += hisobot.butun_soni
+                data.append({
+                    'ism': xodim.first_name,
+                    'ish_vaqti': total_ish_vaqti,
+                    'xato_soni': total_xato_soni,
+                    'butun_soni': total_butun_soni
+                })
+            return data
+
+        # Calculate statistics for different time periods and append to the statistics list
+        statistics.append({'period': '1 year', 'data': calculate_statistics(one_year_ago, now)})
+        statistics.append({'period': '6 months', 'data': calculate_statistics(six_months_ago, now)})
+        statistics.append({'period': '3 months', 'data': calculate_statistics(three_months_ago, now)})
+        statistics.append({'period': '1 month', 'data': calculate_statistics(one_month_ago, now)})
+        statistics.append({'period': '1 week', 'data': calculate_statistics(one_week_ago, now)})
+        statistics.append({'period': '1 day', 'data': calculate_statistics(one_day_ago, now)})
+
         xodim = Xodim.objects.all()
         ser = XodimSerializer(xodim, many=True)
-        return Response(ser.data)
+        return Response({'data':ser.data, 'all_statistics':statistics})
 
     def post(self, request):
         serializer = XodimSerializer(data=request.data)
@@ -111,21 +157,21 @@ class XodimDetail(APIView):
             xodim = Xodim.objects.get(id=id)
             ser = XodimSerializer(xodim)
             l=[]
-            s=[]
             m=[]
             h = Hisobot.objects.filter(xodim=xodim)
-            sum_xato = h.aggregate(soni=Sum('xato_soni'))
-            sum_butun = h.aggregate(soni=Sum('butun_soni'))
-            f = sum_xato['soni']*100/(sum_xato['soni'] + sum_butun['soni'])
-            u = sum_butun['soni']*100/(sum_xato['soni'] + sum_butun['soni'])
-            s.append({
+            sum_xato = h.aggregate(soni=Sum('xato_soni'))['soni'] or 0
+            sum_butun = h.aggregate(soni=Sum('butun_soni'))['soni'] or 0
+            total_mistakes = sum_xato + sum_butun
+            xato_foizi = round((sum_xato * 100) / (total_mistakes) if total_mistakes else 0, 2)
+            butun_foizi = round((sum_butun * 100) / (total_mistakes) if total_mistakes else 0, 2)
+            all_statistic = {
                 'id': xodim.id,
                 'xodimi': xodim.first_name,
                 'Jami_xato': sum_xato,
                 'Jami_butun': sum_butun,
-                'Xato_foizi': round(f, 2),
-                'Butun_foizi':round(u, 2)
-            })
+                'Xato_foizi': xato_foizi,
+                'Butun_foizi': butun_foizi
+            }
             d={}
             for j in h:
                 xodim_mistakes = Hisobot.objects.filter(xodim=j.xodim, mahsulot=j.mahsulot)
@@ -147,9 +193,8 @@ class XodimDetail(APIView):
                     if item['mahsulot_name'] == i.mahsulot.name:
                         item['Xato_foizi'] = round(item['xato_soni']*100/(item['xato_soni'] + item['butun_soni']), 2)
                         item['Butun_foizi'] = round(item['butun_soni']*100/(item['xato_soni'] + item['butun_soni']), 2) 
-
             return Response({'data':ser.data,
-                                    'all_statistic': s,
+                                    'all_statistic': all_statistic,
                                     'mahsulot_xato_soni':d,
                                     'statistic':l,
                                     })
