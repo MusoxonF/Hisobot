@@ -97,7 +97,6 @@ class XodimView(APIView):
     def get(self, request):
         now = timezone.now()
         
-        # Calculate datetime ranges for different time periods
         one_year_ago = now - timedelta(days=365)
         six_months_ago = now - timedelta(days=30*6)
         three_months_ago = now - timedelta(days=30*3)
@@ -105,32 +104,38 @@ class XodimView(APIView):
         one_week_ago = now - timedelta(days=7)
         one_day_ago = now - timedelta(days=1)
 
-        # Initialize a list to store statistics for different time periods
         statistics = []
 
-        # Function to calculate statistics for a given time period
         def calculate_statistics(start_date, end_date):
             xodims = Xodim.objects.all()
             data = []
             for xodim in xodims:
-                # Filter Hisobot objects based on xodim and time period
                 hisobots = Hisobot.objects.filter(xodim=xodim, created_at__range=[start_date, end_date])
                 total_ish_vaqti = 0
                 total_xato_soni = 0
                 total_butun_soni = 0
+                total_mistakes = 0
+                xato_foizi = 0
+                butun_foizi = 0
                 for hisobot in hisobots:
                     total_ish_vaqti += hisobot.ish_vaqti
                     total_xato_soni += hisobot.xato_soni
                     total_butun_soni += hisobot.butun_soni
+                    total_mistakes = total_xato_soni + total_butun_soni
+                    xato_foizi = round((total_xato_soni * 100) / (total_mistakes) if total_mistakes else 0, 2)
+                    butun_foizi = round((total_butun_soni * 100) / (total_mistakes) if total_mistakes else 0, 2)
+                    # print(xato_foizi)
+                    # print(butun_foizi)
                 data.append({
                     'ism': xodim.first_name,
                     'ish_vaqti': total_ish_vaqti,
                     'xato_soni': total_xato_soni,
-                    'butun_soni': total_butun_soni
+                    'butun_soni': total_butun_soni,
+                    'Xato_foizi': xato_foizi,
+                    'Butun_foizi': butun_foizi,
                 })
             return data
 
-        # Calculate statistics for different time periods and append to the statistics list
         statistics.append({'period': '1 year', 'data': calculate_statistics(one_year_ago, now)})
         statistics.append({'period': '6 months', 'data': calculate_statistics(six_months_ago, now)})
         statistics.append({'period': '3 months', 'data': calculate_statistics(three_months_ago, now)})
