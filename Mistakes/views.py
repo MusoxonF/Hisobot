@@ -231,8 +231,27 @@ class MaxsulotView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request):
         maxsulot = Maxsulot.objects.all()
+        l=[]
+        for i in maxsulot:
+            h = Hisobot.objects.filter(mahsulot=i)
+            for j in h:
+                found = False
+                for item in l:
+                    if item['mahsulot_name'] == j.mahsulot.name:
+                        item['xato_soni'] += j.xato_soni
+                        item['butun_soni'] += j.butun_soni
+                        found = True
+                        break
+                if not found:
+                    l.append({'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni, 'Xato_foizi': None, 'Butun_foizi': None})
+            for i in h:
+                for item in l:
+                    if item['mahsulot_name'] == i.mahsulot.name:
+                        item['Xato_foizi'] = round(item['xato_soni']*100/(item['xato_soni'] + item['butun_soni']), 2)
+                        item['Butun_foizi'] = round(item['butun_soni']*100/(item['xato_soni'] + item['butun_soni']), 2) 
+
         ser = MaxsulotSerializer(maxsulot, many=True)
-        return Response(ser.data)
+        return Response({'data':l})
 
     def post(self, request):
         serializer = MaxsulotSerializer(data=request.data)
@@ -259,7 +278,11 @@ class MaxsulotDetail(APIView):
                     break
             if not found:
                 a.append({'xato_name': j.xato.name , 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni})
-
+        for i in missed:
+            for item in a:
+                if item['xato_name'] == i.xato.name:
+                    item['Xato_foizi'] = round(item['xato_soni']*100/(item['xato_soni'] + item['butun_soni']), 2)
+                    item['Butun_foizi'] = round(item['butun_soni']*100/(item['xato_soni'] + item['butun_soni']), 2) 
         return Response({'data':ser.data,
                          'statistic':a})
 
