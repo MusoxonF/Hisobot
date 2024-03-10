@@ -128,7 +128,7 @@ class BolimDetail(APIView):
                     found = False
                     for item in c:
                         if item['mahsulot_name'] == j.mahsulot.name:
-                            item['mahsulot_id'] += j.mahsulot.mahsulot_id
+                            item['mahsulot_id'] = j.mahsulot.mahsulot_id
                             item['xato_soni'] += j.xato_soni
                             item['butun_soni'] += j.butun_soni
                             found = True
