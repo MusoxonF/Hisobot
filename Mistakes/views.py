@@ -243,7 +243,7 @@ class MaxsulotView(APIView):
                         found = True
                         break
                 if not found:
-                    l.append({'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni, 'Xato_foizi': None, 'Butun_foizi': None})
+                    l.append({'id':j.mahsulot.id, 'mahsulot_id':j.mahsulot.mahsulot_id, 'mahsulot_name': j.mahsulot.name, 'xato_soni': j.xato_soni, 'butun_soni': j.butun_soni, 'Xato_foizi': None, 'Butun_foizi': None})
             for i in h:
                 for item in l:
                     if item['mahsulot_name'] == i.mahsulot.name:
