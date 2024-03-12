@@ -158,6 +158,7 @@ class XodimDetail(APIView):
             statistics.append({'period': '1 month', 'data': calculate_statistics(one_month_ago, now)})
             statistics.append({'period': '1 week', 'data': calculate_statistics(one_week_ago, now)})
             statistics.append({'period': '1 day', 'data': calculate_statistics(one_day_ago, now)})
+            
             xodim = Xodim.objects.get(id=id)
             ser = XodimSerializer(xodim)
             l=[]
@@ -165,12 +166,14 @@ class XodimDetail(APIView):
             h = Hisobot.objects.filter(xodim=xodim)
             sum_xato = h.aggregate(soni=Sum('xato_soni'))['soni'] or 0
             sum_butun = h.aggregate(soni=Sum('butun_soni'))['soni'] or 0
+            sum_ish_vaqti = h.aggregate(soni=Sum('ish_vaqti'))['soni'] or 0
             total_mistakes = sum_xato + sum_butun
             xato_foizi = round((sum_xato * 100) / (total_mistakes) if total_mistakes else 0, 2)
             butun_foizi = round((sum_butun * 100) / (total_mistakes) if total_mistakes else 0, 2)
             all_statistic = {
                 'id': xodim.id,
                 'xodimi': xodim.first_name,
+                'ish_vaqti': sum_ish_vaqti,
                 'Jami_xato': sum_xato,
                 'Jami_butun': sum_butun,
                 'Xato_foizi': xato_foizi,
