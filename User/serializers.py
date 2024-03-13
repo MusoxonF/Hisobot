@@ -8,6 +8,10 @@ class ChangePasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
 
 
+class ForgotPasswordSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):

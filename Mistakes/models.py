@@ -23,15 +23,15 @@ class Problem(models.Model):
 
 
 class Hisobot(models.Model):
-    xodim = models.ForeignKey(Xodim, on_delete=models.CASCADE, related_name='xodim')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='User')
-    xato = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='problem', null=True, blank=True)
+    xodim = models.ForeignKey(Xodim, on_delete=models.SET_DEFAULT, default='o\'chirilgan xodim', related_name='xodim')
+    user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default='o\'chirilgan user', related_name='User')
+    xato = models.ForeignKey(Problem, on_delete=models.SET_DEFAULT, default='o\'chirilgan xato', related_name='problem', null=True, blank=True)
     photo = models.ManyToManyField(Photo, related_name='MistakesPhoto')
     audio = models.FileField(upload_to = 'MistakeFiles/', null=True, blank=True)
     izoh = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
-    mahsulot = models.ForeignKey(Maxsulot, on_delete=models.CASCADE, related_name = 'maxsulot')
+    mahsulot = models.ForeignKey(Maxsulot, on_delete=models.SET_DEFAULT, default='o\'chirilgan mahsulot', related_name = 'maxsulot')
     xato_soni = models.PositiveIntegerField(default=0)
     butun_soni = models.PositiveIntegerField(default=0)
     ish_vaqti = models.PositiveIntegerField(null=True)

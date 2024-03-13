@@ -19,4 +19,5 @@ urlpatterns = [
     path('xodim/', XodimView.as_view(), name='xodim'),
     path('xodim/<int:id>/', XodimDetail.as_view(), name='xodim_detail'),
     path('change/', ChangePasswordView.as_view(), name='change_password'),
+    path('forgot_password/', ForgotPasswordView.as_view(), name='forgot_password'),
 ]

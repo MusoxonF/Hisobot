@@ -43,6 +43,35 @@ class ChangePasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ForgotPasswordView(APIView):
+    parser_classes = [JSONParser, MultiPartParser]
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ForgotPasswordSerializer
+    
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if request.user.is_authenticated and request.user.status == 'Admin':
+            if serializer.is_valid():
+                username = serializer.data.get("username")
+                new_password = serializer.data.get("new_password")
+                user = get_user_model().objects.filter(username=username).first()
+                if user:
+                    user.set_password(new_password)
+                    user.save()
+                    # If you are using TokenAuthentication, you may need to update the token here
+                    refresh = RefreshToken.for_user(user)
+                    access_token = str(refresh.access_token)
+
+                    return Response({
+                    "detail": "Password updated successfully",
+                    "access_token": access_token,
+                    "refresh_token": str(refresh)
+                }, status=status.HTTP_200_OK)
+                return Response({'message': 'User topilmadi'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Siz admin emassiz yoki ro\'yxatdan o\'tmagansiz'})
+
+
 class SignUpView(APIView):
     parser_classes = [JSONParser, MultiPartParser]
     def get(self, request):
