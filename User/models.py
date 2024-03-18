@@ -33,7 +33,7 @@ class Ish_turi(models.Model):
 class Bolim(models.Model):
     name = models.CharField(max_length=100, unique=True)
     bulim_id = models.CharField(max_length = 5, unique=True)
-    user = models.OneToOneField(User, on_delete=models.SET_DEFAULT, default='o\'chirilgan user', null=True)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f'{self.name}/{self.user}'
@@ -52,6 +52,6 @@ class Xodim(models.Model):
     phone = models.CharField(max_length=13, unique=True)
     ish_turi = models.ManyToManyField(Ish_turi, related_name = 'ish_turi')
     id_raqam = models.CharField(max_length = 5, unique=True)
-    bulimi = models.ForeignKey(Bolim, on_delete = models.SET_DEFAULT, default='o\'chirilgan user', related_name = 'bolim')
+    bulimi = models.ForeignKey(Bolim, on_delete = models.SET_NULL, null=True, related_name = 'bolim')
     def __str__(self):
         return f'{self.id_raqam}/{self.first_name}/{self.last_name}'

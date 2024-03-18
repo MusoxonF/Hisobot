@@ -43,3 +43,12 @@ class XodimStatistic(APIView):
                 
                 })
                 return Response({'data':l})
+# for i in h:
+        #     found2 = False
+        #     for item in l:
+        #         if item['xato_name'] == i.xato.name:
+        #             item['xato_soni'] += i.xato_soni
+        #             found2 = True
+        #             break
+        #     if not found2:
+        #         l.append({'xato_name': i.xato.name, 'xato_soni': i.xato_soni})
